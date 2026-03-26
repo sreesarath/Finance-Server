@@ -74,30 +74,49 @@ res.json(user)
     
 }
 // login
-exports.login=async(req,res)=>{
-    const {email,password}=req.body
-    const user=await Users.findOne({email})
-    if (!user) {
-        return res.status(400).json("User not found")
-    }
-    const isMatch= await bcrypt.compare(password,user.password)
-    if (!isMatch) {
-        return res.status(400).json("wrong password")
-    }
-    const token=jwt.sign(
-        {id:user._id},
-        process.env.JWT_SECRET,
-        {expiresIn:"1d"}
-    )
-    res.json({
-        token,
-        user:{
-            username:user.username,
-            email:user.email,
-            id:user._id
-        }
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-    })
-}
+    console.log("LOGIN BODY:", req.body);
+
+    if (!email || !password) {
+      return res.status(400).json("Missing email or password");
+    }
+
+    const user = await Users.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json("User not found");
+    }
+
+    // ✅ CORRECT PASSWORD CHECK
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json("Wrong password");
+    }
+
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.json({
+      token,
+      user: {
+        username: user.username,
+        email: user.email,
+        id: user._id
+      }
+    });
+
+  } catch (err) {
+    console.log("🔥 LOGIN ERROR:", err);
+    res.status(500).json("Server error");
+  }
+};
+
 
 
