@@ -8,7 +8,11 @@ const app=express()
 
 //middleware
 app.use(cors({
-  origin:"finance-tracker-l7q3r5t79-saraths-projects-5cab5eed.vercel.app",
+  origin:[
+    "http://localhost:5173", // local dev
+    "https://finance-tracker-l7q3r5t79-saraths-projects-5cab5eed.vercel.app" // production
+
+  ],
   credentials: true
 }))
 app.use(express.json())
