@@ -7,7 +7,10 @@ const cors=require('cors')
 const app=express()
 
 //middleware
-app.use(cors())
+app.use(cors({
+  origin:"",
+  credentials: true
+}))
 app.use(express.json())
 
 //database connection
